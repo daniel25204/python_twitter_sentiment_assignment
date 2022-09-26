@@ -43,11 +43,27 @@ def get_neg(line):
 input_file = "project_twitter_data.csv"
 output_file = "resulting_data.csv"
 
-import csv 
+# import csv 
+def dictReader(file):
+    result = []
+    keys = file.readline().strip().split(',')
+    for l in file:
+        values = l.strip().split(',')
+        temp_dict = dict(zip(keys, values))
+        result.append(temp_dict)
+    return result
+
+def dictWrite(file, keys, data):
+    header = ','.join(keys) + "\n"
+    file.write(header)
+    for d in data:
+        line = ','.join([str(d[k]) for k in keys]) + '\n'
+        file.write(line)
+
 
 input_datas = []
 with open(input_file, 'r') as f:
-    reader = csv.DictReader(f)
+    reader = dictReader(f)
     for x in reader:
         input_datas.append(x)
 
@@ -57,10 +73,10 @@ for t in input_datas:
     t["net_score"] = get_pos(t["tweet_text"]) - get_neg(t["tweet_text"])
 
 
-from pprint import pprint
-pprint(input_datas)
+# from pprint import pprint
+# pprint(input_datas)
 
-with open(output_file, 'w', newline='') as f:
-    writer = csv.DictWriter(f, ['tweet_text', 'retweet_count', 'reply_count', 'pos_count', 'neg_count', 'net_score'])
-    writer.writeheader()
-    writer.writerows(input_datas)
+with open(output_file, 'w') as f:
+    dictWrite(f, ['tweet_text', 'retweet_count', 'reply_count', 'pos_count', 'neg_count', 'net_score'], input_datas)
+    # writer.writeheader()
+    # writer.writerows(input_datas)
